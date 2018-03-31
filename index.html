@@ -1,0 +1,107 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Licence To Leak</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+    <link rel="stylesheet" href="css/normalize.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono|Press+Start+2P" rel="stylesheet">
+
+    <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+</head>
+
+<body>
+    <div class="header">
+            <h1>Licence To Leak</h1>
+            <img src="img/banner.png"/>
+    </div>
+    <div class="main">
+    <p>The <b>Samsung IoT Security Research Team</b> disclosed today (1st April 2018) a serious vulnerability in an essential component of critical office
+        infrastructure - coffee machines. This is also an announcement of a new type of vulnerability - <b>Coffee Overflow</b> error,
+        also called <b>"Licence to Leak"</b>. Based on our research, this vulnerability can be found in a large number of Internet
+        connected coffee machines from multiple vendors, all implementing Hyper Text Coffee Pot Control Protocol (HTCPCP/1.0),
+        as described in RFC 2324 published on 1 April 1998 <a href="#references">[1]</a>.</p>
+    <p>
+        We have contacted multiple vendors, but none of them has yet fixed the issue. Additionally, this vulnerability was confirmed
+        by independent and anonymous coffee tasters.</p>
+    <p>
+        Due to the 20th anniversary of HTCPCP, we have decided to announce our finding immediately, releasing also an exploit script
+        (included below).</p>
+
+     <p>RFC 2324 section 2.2.2.1 defines a special "Accept-Additions" header with the following BFN rules:</p>
+    <pre>
+        Accept-Additions = "Accept-Additions" ":"
+                          #( addition-range [ accept-params ] )
+
+        addition-type   = ( "*"
+                          | milk-type
+                          | syrup-type
+                          | sweetener-type
+                          | spice-type
+                          | alcohol-type
+                          ) *( ";" parameter )
+        milk-type       = ( "Cream" | "Half-and-half" | "Whole-milk"
+                          | "Part-Skim" | "Skim" | "Non-Dairy" )
+        syrup-type      = ( "Vanilla" | "Almond" | "Raspberry"
+                          | "Chocolate" )
+        alcohol-type    = ( "Whisky" | "Rum" | "Kahlua" | "Aquavit" )</pre>
+
+    <p>
+        The main problem is that the RFC does not strictly define the parameter for alcohol-type variables. Most of the coffee machines vendors
+        used a 16-bit unsigned integer, while larger values are also possible, depending on different alcohol bottle sizes.</p>
+    <p>
+        The following HTCPCP request can be used to leak coffee by overflowing alcohol-type parameters:</p>
+    <pre>
+        BREW kafo:/pot-0 HTCPCP/1.0
+        Content-Type: message/coffeepot
+        Accept-Additions: Whisky;32777,Rum;-1
+    </pre>
+    <p>
+        Please use the below command to test your coffee machine:
+    </p>
+    <pre>
+        echo -e "BREW kafo:/pot-0 HTCPCP/1.0\nContent-Type: message/coffeepot\nAccept-Additions: Whisky;32777,Rum;-1\r\n\r\n" | nc &ltip of coffee machine&gt &ltport of coffee machine&gt
+    </pre>
+    <p>
+        Example of vulnerable machine:
+    </p>
+    <img src="img/Htcpcp_teapot.jpg"/>
+    <p style="text-align: center">Implementation of HTCPCP <a href="#references">[2]</a></p>
+    <p>
+        If your coffee machine is responding with an error message "418 I'm a teapot", this may be an indication of a coffee machine
+        malware called APT (Advanced Persistent Teapot) serving potions containing reduced doses of caffeine, leading to reduced
+        work efficiency and paltry code quality.
+    </p>
+    <p>
+    <b>Long live HTCPCP and <a href="http://save418.com/">save the HTTP 418 status code!</a></b>
+    </p>
+
+    </div>
+    <hr/>
+    <div class="references" id="references">
+        <p>References:</p>
+        <p>[1] Masinter L., <a href="https://tools.ietf.org/html/rfc2324">Hyper Text Coffee Pot Control Protocol (HTCPCP/1.0)</a>, RFC 2324, IETF, 1st April 1998</p>
+        <p>[2] <a href="http://error418.net/">Error 418 - I'm a Teapot</a></p>
+    </div>
+    <hr/>
+    <p>
+            If you are interested in joining us in Poland please use this token to apply:
+        </p>
+        <pre>
+                eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ
+                TYW1zdW5nIFJlc2VhcmNoIiwiaWF0IjoxNTIyMzI4Mzc3LCJ
+                leHAiOjE1NTM4NjQzOTcsImF1ZCI6IkN1cmlvdXMgRW5naW5
+                lZXJzIiwic3ViIjoieW91QHJlYWRpbmcudGhpcyIsImFwcGx
+                5IjoiaHR0cHM6Ly93d3cucHJhY3VqLnBsL3ByYWNhL3NhbXN
+                1bmclMjByLXgzOC1kJTIwaW5zdGl0dXRlJTIwcG9sYW5kIn0
+                .iZnZngqSwof3pgT1cYqD-5fLoq_v7uI8cUShu0P8gZQ
+        </pre>
+</body>
+
+</html>
